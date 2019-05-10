@@ -1,31 +1,50 @@
 <?php
-    $to = 'demo@spondonit.com';
-    $name = $_POST["name"];
-    $email= $_POST["email"];
-    $text= $_POST["message"];
-    $sub= $_POST["sub"];
-    
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+require 'vendor/autoload.php';
+// servidor 
+
+$mail = new PHPMailer(true);
+try {
+$mail->SMTPDebug = 2;
+$mail->isSMTP();
+$mail->Host = 'smtp1.example.com;smtp2.example.com'
+$mail->SMTPAuth = true;
+$mail->Username = 'user@example.com';
+$mail->Password = 'secret';
+$mail->SMTPSecure = 'tls';
+$mail->Port = 587;
+
+//remetentes
+$mail->setFrom('from@example.com', 'Mailer');
+$mail->addAddress('joe@example.net','Joe User');
+$mail->addAddress('ellen@example.com');
+$mail->addReplyTo('info@example.com', 'Information');
+$mail->addCC('cc@example.com');
+$mail->addBCC('bcc@example.com');
 
 
-    $headers = 'MIME-Version: 1.0' . "\r\n";
-    $headers .= "From: " . $email . "\r\n"; // Sender's E-mail
-    $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+//conteudo
+$mail->isHTML(true);
+$mail->Subject = 'Here is the subject';
+$mail->Body = 'This is the HTML message body <b> in bold </b>';
+$mail->AltBody = 'This is the body in plain text for non-HTML clients';
 
-    $message ='<table style="width:100%">
-        <tr>
-            <td>'.$name.'</td>
-        </tr>
-        <tr><td>Email: '.$email.'</td></tr>
-        <tr><td>phone: '.$sub.'</td></tr>
-        <tr><td>Text: '.$text.'</td></tr>
-        
-    </table>';
+$mail->send();
+echo 'Message has been sent';
+} catch (Exception $e) {
+    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+}
 
-    if (@mail($to, $email, $message, $headers))
-    {
-        echo 'The message has been sent.';
-    }else{
-        echo 'failed';
-    }
+
+
+
+
+
+
+
+
+}
+  
 
 ?>
