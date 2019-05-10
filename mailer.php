@@ -1,38 +1,46 @@
 <?php
+require ('vendor/autoload.php');
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-require 'vendor/autoload.php';
 // servidor 
-
-$mail = new PHPMailer(true);
-try {
-$mail->SMTPDebug = 2;
+error_reporting(E_ALL);
+require 'mailer/PHPMailerAutoload.php';
+        
+     if (isset($_POST['assunto']) && !empty($_POST['assunto'])) {
+                 $assunto = $_POST['assunto'];
+      }
+      if (isset($_POST['mensagem']) && !empty($_POST['mensagem'])) {
+                 $mensagem = $_POST['mensagem'];   
+  
+$mail = new PHPMailer;     
 $mail->isSMTP();
-$mail->Host = 'smtp1.example.com;smtp2.example.com'
+$mail->Host = 'smtp.gmail.com';
 $mail->SMTPAuth = true;
-$mail->Username = 'user@example.com';
-$mail->Password = 'secret';
 $mail->SMTPSecure = 'tls';
+$mail->Username = 'exemplo@gmail.com';
+$mail->Password = 'senha';
 $mail->Port = 587;
+    
 
 //remetentes
-$mail->setFrom('from@example.com', 'Mailer');
-$mail->addAddress('joe@example.net','Joe User');
-$mail->addAddress('ellen@example.com');
-$mail->addReplyTo('info@example.com', 'Information');
-$mail->addCC('cc@example.com');
-$mail->addBCC('bcc@example.com');
+$mail->setFrom('remetente@email.com.br');
+$mail->addReplyTo('no-reply@email.com.br');
+$mail->addAddress('email@email.com.br', 'Nome');
+$mail->addAddress('email@email.com.br', 'Contato');
+$mail->addCC('email@email.com.br', 'Cópia');
+$mail->addBCC('email@email.com.br', 'Cópia Oculta');
 
-
-//conteudo
-$mail->isHTML(true);
-$mail->Subject = 'Here is the subject';
-$mail->Body = 'This is the HTML message body <b> in bold </b>';
-$mail->AltBody = 'This is the body in plain text for non-HTML clients';
-
-$mail->send();
-echo 'Message has been sent';
-} catch (Exception $e) {
-    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+$mail->setFrom('email@gmail.com', 'Contato');
+$mail->addAddress('email@mail.com.br');    
+$mail->isHTML(true);  
+$mail->Subject = $assunto;
+$mail->Body    = nl2br($mensagem);
+$mail->AltBody = nl2br(strip_tags($mensagem));
+         if(!$mail->send()) {
+       echo 'Não foi possível enviar a mensagem.<br>';
+       echo 'Erro: ' . $mail->ErrorInfo;
+   } else {
+       header('Location: index.php?enviado'); 
 }
-?>
+ }
+          ?>
