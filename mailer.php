@@ -4,44 +4,36 @@
 error_reporting(E_ALL);
 
 require 'vendor/autoload.php';
+require_once('class.phpmailer.php'); //chama a classe de onde você a colocou.
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+$mail = new PHPMailer(); // instancia a classe PHPMailer
 
-if (isset($_POST['assunto']) && !empty($_POST['assunto'])) {
-		 $assunto = $_POST['assunto'];
-}
-if (isset($_POST['mensagem']) && !empty($_POST['mensagem'])) {
-		$mensagem = $_POST['mensagem'];   
+$mail->IsSMTP();
 
-		$mail = new PHPMailer;     
-		$mail->isSMTP();
-		$mail->Host = 'smtp.gmail.com';
-		$mail->SMTPAuth = true;
-		$mail->SMTPSecure = 'tls';
-		$mail->Username = 'exemplo@gmail.com';
-		$mail->Password = 'senha';
-		$mail->Port = 587;
-			
-		//remetentes
-		$mail->setFrom('remetente@email.com.br');
-		$mail->addReplyTo('no-reply@email.com.br');
-		$mail->addAddress('email@email.com.br', 'Nome');
-		$mail->addAddress('email@email.com.br', 'Contato');
-		$mail->addCC('email@email.com.br', 'Cópia');
-		$mail->addBCC('email@email.com.br', 'Cópia Oculta');
-		$mail->setFrom('email@gmail.com', 'Contato');
-		$mail->addAddress('email@mail.com.br');    
-		$mail->isHTML(true);  
-		$mail->Subject = $assunto;
-		$mail->Body    = nl2br($mensagem);
-		$mail->AltBody = nl2br(strip_tags($mensagem));
-		if(!$mail->send()) {
-			echo 'Não foi possível enviar a mensagem.<br>';
-			echo 'Erro: ' . $mail->ErrorInfo;
-		} else {
-			header('Location: index.php?enviado'); 
-		}
-}
+//configuração do gmail
+$mail->Port = '465'; //porta usada pelo gmail.
+$mail->Host = 'smtp.gmail.com'; 
+$mail->IsHTML(true); 
+$mail->Mailer = 'smtp'; 
+$mail->SMTPSecure = 'ssl';
+
+//configuração do usuário do gmail
+$mail->SMTPAuth = true; 
+$mail->Username = 'gabrielle.clima23@gmail.com'; // usuario gmail.   
+$mail->Password = 'gabilimajk12'; // senha do email.
+
+$mail->SingleTo = true; 
+
+// configuração do email a ver enviado.
+$mail->From = "Mensagem de email, pode vim por uma variavel."; 
+$mail->FromName = "Nome do remetente."; 
+
+$mail->addAddress("destinatario@hotmail.com"); // email do destinatario.
+
+$mail->Subject = "Aqui vai o assunto do email, pode vim atraves de variavel."; 
+$mail->Body = "Aqui vai a mensagem, que tambem pode vim por variavel.";
+
+if(!$mail->Send())
+    echo "Erro ao enviar Email:" . $mail->ErrorInfo;
 
 ?>
